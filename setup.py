@@ -13,9 +13,45 @@ def reset():
             with open("json/defaultServer.json", "r") as r:
                 f.write(r.read())
 
+def integrityCheck():
+    with open("json/control.json", "r") as f:
+        data=json.load(f)
+    if "prefix" not in data or "Features" not in data:
+        print("control.json is corrupted. Do you want to reset it? (y/n)")
+        choice=input().lower()
+        if choice=="y":
+            reset()
+        else:
+            print("Check /json/control.json and fix the issue manually.")
+        time.sleep(2)
+    else:
+        print("control.json passed the integrity check.")
+        time.sleep(1)
+    print("Checking server specific files...")
+    time.sleep(2)
+    try:
+     for file in "json/server":
+        with open(file, "r") as f:
+            data=json.load(f)
+        if "prefix" not in data or "Features" not in data:
+            print(f"{file} is corrupted. Do you want to reset it? (y/n)")
+            choice=input().lower()
+            if choice=="y":
+                with open("json/defaultServer.json", "r") as r:
+                    with open(file, "w") as f:
+                        f.write(r.read())
+                print("File reset.")
+            else:  
+                print(f"Check {file} and fix the issue manually.")
+                time.sleep(1)
+    except FileNotFoundError:
+        print("No server specific files found. Skipping this step.")
+        time.sleep(1)
+    print("Integrity check complete. Fix the errors(if any) and restart the bot.")
+
 def setup():
     print("Welcome to TickDroid 2.0 setup!")
-    print("Performing an integrity check...")
+    print("Performing a file check...")
     time.sleep(2)
     required_files = [
         "json/botmods.json",
@@ -48,7 +84,7 @@ def setup():
                     with open("json/defaultServer.json", "r") as r:
                         f.write(r.read())
     time.sleep(2)
-    print("Integrity check complete.")
+    print("File check complete.")
     print("Entering main setup...")
     time.sleep(1)
     print("Enter bot admin user Discord ID: (the one who can edit the bot settings)")
@@ -66,4 +102,4 @@ def setup():
     print("<mention the bot>setup to add server information to the bot database if it is not added automatically.")
     print("Read the readME file for more information.")
 
-setup()
+integrityCheck()
