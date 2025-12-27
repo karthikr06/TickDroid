@@ -1,0 +1,14 @@
+json/botmods.json
+json/control.json
+json/server/ 
+*.log
+*.pot
+*.pyc
+__pycache__/
+env/
+.DS_Store
+Thumbs.db
+*.json
+!json/defaultServer.json
+.env
+.env.local
