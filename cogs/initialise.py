@@ -1,8 +1,6 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import os
-import random
-import aiohttp
 import json
 
 #getting the configuration file

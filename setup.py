@@ -3,6 +3,20 @@ import os
 import time
 import json
 
+
+defaultData='''{
+    "prefix": "[t-]",
+    "Features": {
+        "ping":true,
+        "8ball": true,
+        "gemini": true,
+        "onMessage": true,
+        "AImemory": true
+    },
+    "AI_memory":[]
+}'''
+
+
 def reset():
     print("Are you sure you want to reset the bot? This will delete all data. (y/n)")
     choice=input().lower()
@@ -61,17 +75,7 @@ def setup():
 
     print("Setting the default configuration file...")
     with open(file, "w") as f:
-        f.write('''{
-    "prefix": "t-",
-    "Features": {
-        "ping":true,
-        "8ball": true,
-        "gemini": true,
-        "onMessage": true,
-        "AImemory": true
-    },
-    "AI_memory":[]
-}''')
+        f.write(defaultData)
         
     for file in required_files:
         if not os.path.exists(file):
@@ -87,19 +91,37 @@ def setup():
     print("File check complete.")
     print("Entering main setup...")
     time.sleep(1)
-    print("Enter bot admin user Discord ID: (the one who can edit the bot settings)")
-    print("You can add more admins later by editing json/botmods.json")
-    adminID=input("Admin Discord ID: ")
-    print("Enter webhook URL for bot logs: ")
-    webhookURL=input("Webhook URL: ")
-    with open("json/botmods.json", "r") as f:
-        f=json.load(f)
-    with open("json/botmods.json", "w") as file:
-        f["admin"]=[int(adminID)]
-        f["webookURL"]=webhookURL
-        json.dump(f, file, indent=4)
+    print("Bot admin is the admin who can use admin commands and manage the bot settings.")
+    print("You can add admins by editing json/botmods.json")
+    print("In the same folder, add webhook URL, Gemini API key and bot token to their respective fields.")
+    print("DO NOT SHARE THESE KEYS WITH ANYONE!")
+    text=""
+    while(text!="continue"):
+        print("Type 'continue' to finish the setup.")
+        text=input().lower()
+    
     print("Setup complete! You can now run the bot.")
     print("<mention the bot>setup to add server information to the bot database if it is not added automatically.")
     print("Read the readME file for more information.")
+    integrityCheck()
 
-integrityCheck()
+def main():
+    print("TickDroid setup: ")
+    print("1. Run setup" \
+    "2. Reset bot data" \
+    "3. Exit")
+    while True:
+        choice=input("Enter your choice (1/2/3): ")
+        if choice=="1":
+            setup()
+        elif choice=="2":
+            reset()
+        elif choice=="3":
+            print("Exiting setup.")
+            time.sleep(1)
+        else:
+            print("Invalid choice. Exiting setup.")
+            time.sleep(1)
+
+if __name__=="__main__":
+    main()

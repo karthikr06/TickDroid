@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import os
 from datetime import datetime
-import requests
 import json
 
 #getting the configuration file
@@ -14,13 +13,41 @@ if not webhookURL:
 else:
     webhook=discord.SyncWebhook.from_url(webhookURL)
 
+# Function to get server-specific prefix
+def get_prefix(bot, message):
+    # If in DM, use default prefix
+    if not message.guild:
+        with open("json/defaultServer.json", "r") as f:
+            default_config = json.load(f)
+        prefix = default_config.get("prefix")
+        return prefix
+    
+    # Try to load server-specific prefix
+    filepath = f"json/server/{message.guild.id}.json"
+    try:
+        with open(filepath, "r") as f:
+            server_config = json.load(f)
+        prefix = server_config.get("prefix")
+
+    except FileNotFoundError:
+        #creating the file if not found
+        print(f"Created {filepath} since it was not found.")
+        filepath = os.path.join("json","server",f"{str(message.guild.id)}.json")
+        if not os.path.exists(filepath):
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            with open(filepath, 'w')as f:
+                with open("json/defaultServer.json", 'r')as r:
+                    defaultData=json.load(r)
+                data=defaultData
+                json.dump(data, f, indent=4)
+        prefix = data.get("prefix")
+    return prefix
+
 intents = discord.Intents.default()
 intents.message_content = True
-client = commands.Bot(intents=intents, command_prefix="t-")
+client = commands.Bot(intents=intents, command_prefix=get_prefix)
 
-if not webhookURL:
-    pass
-else:
+if webhookURL:
     webhook.send("Bot is starting...")
 
 def checkMod(user, type):
@@ -34,30 +61,22 @@ def checkMod(user, type):
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
-    if not webhookURL:
-        pass
-    else:
+    if webhookURL:
         webhook.send("-------------")
         webhook.send(f"Logged in as {client.user}") 
     
     start_time = datetime.now()
-    if not webhookURL:
-        pass
-    else:
+    if webhookURL:
         webhook.send(f"Started at: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             try:
                 await client.load_extension(f'cogs.{filename[:-3]}') 
             except Exception as e:
-                if not webhookURL:
-                    pass    
-                else:
+                if webhookURL:
                     webhook.send(f"Failed to load cog {filename[:-3]}: {type(e).__name__}: {e}")
                     
-    if not webhookURL:  
-        pass    
-    else:
+    if webhookURL:
         webhook.send("-------------")
 
 

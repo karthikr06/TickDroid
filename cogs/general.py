@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands, tasks
 import os
 import json
-import aiohttp
 
 #getting the configuration file
 with open("json/botmods.json", "r") as f:
@@ -20,7 +19,7 @@ class General(commands.Cog):
                 pass
             else:
                 webhook.send("general.py loaded")
-        
+
         @commands.Cog.listener()
         async def on_message(self, message):
             if message.author.bot:
@@ -66,7 +65,7 @@ class General(commands.Cog):
                     bot_prefix = self.client.command_prefix
                 elif isinstance(self.client.command_prefix, list) and self.client.command_prefix:
                     bot_prefix = self.client.command_prefix[0]
-            
+
                 embed.set_footer(text=f"My prefix is: {bot_prefix}")
                 await message.reply(embed=embed)
 
@@ -97,6 +96,8 @@ class General(commands.Cog):
                 '''
                 await ctx.reply(gemini_response_text)
         
+        
+
 
 async def setup(client):
     await client.add_cog(General(client))

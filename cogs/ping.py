@@ -1,6 +1,6 @@
 import json
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 #getting the configuration file
 with open("json/botmods.json", "r") as f:

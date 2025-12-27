@@ -1,5 +1,5 @@
 {
-    "prefix": "t-",
+    "prefix": ["t-"],
     "Features": {
         "ping":true,
         "8ball": true,
