@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import os
 import json
 
@@ -90,13 +90,13 @@ class General(commands.Cog):
                     bot_prefix = self.client.command_prefix
                 elif isinstance(self.client.command_prefix, list) and self.client.command_prefix:
                     bot_prefix = self.client.command_prefix[0]
-            
+
                 embed.set_footer(text=f"My prefix is: {bot_prefix}")
                 #await ctx.reply(embed=embed)
                 '''
                 await ctx.reply(gemini_response_text)
         
-        
+
 
 
 async def setup(client):

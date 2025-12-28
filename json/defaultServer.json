@@ -1,5 +1,6 @@
 {
     "prefix": ["t-"],
+    "admins": [],
     "Features": {
         "ping":true,
         "8ball": true,

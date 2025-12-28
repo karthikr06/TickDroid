@@ -6,6 +6,7 @@ import json
 
 defaultData='''{
     "prefix": "[t-]",
+    "admins": [],
     "Features": {
         "ping":true,
         "8ball": true,
