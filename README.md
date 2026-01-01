@@ -2,10 +2,10 @@
 A simple multi-purpose Discord bot, now with AI.<br>
 Run `setup.py` to setup the bot, and use this in your server.
 
-Detailed instructions on how to setup the the bot will be added soon.
+Detailed instructions on how to set up the bot will be added soon.
 
 <br><br><br>
 
 
 # About TickDroid: 
-TickDroid project was started back in 2020 during the lockdown. I, along with my friends, built this really friendly and useful discord bot. Unfortunately, all the files got removed from our host website a few years ago. This is my attempt in restarting the TickDroid project from scratch, with all new features, while still maintaining the tag of a helpful bot. 
+Originally built with friends, it served as a friendly and useful utility for our community. Although the original source files were lost years ago, this project represents a fresh start. TickDroid has been rebuilt from scratch, featuring modern AI integration while maintaining its original goal: to be a helpful bot on your server.
