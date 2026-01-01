@@ -134,8 +134,7 @@ class commandClass(commands.Cog):
         embed.add_field(name="Member Count", value=guild.member_count, inline=False)
         embed.add_field(name="Created At", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
         await ctx.send(embed=embed)
-
-
+    
 
 async def setup(client):
     await client.add_cog(commandClass(client))
