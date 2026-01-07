@@ -18,19 +18,20 @@ def get_prefix(bot, message):
     # If in DM, use default prefix
     if not message.guild:
         with open("json/defaultServer.json", "r") as f:
-            default_config = json.load(f)
-        prefix = default_config.get("prefix")
-        return prefix
+            file = json.load(f)
+        prefix = file.get("prefix")
+        return prefix #default prefix for DMs.
+                      #DM commands and messages are a WIP and may not work properly
     
-    # Try to load server-specific prefix
+    # Try to load server specific prefix
     filepath = f"json/server/{message.guild.id}.json"
     try:
         with open(filepath, "r") as f:
-            server_config = json.load(f)
-        prefix = server_config.get("prefix")
+            file = json.load(f)
+        prefix = file.get("prefix")
 
     except FileNotFoundError:
-        #creating the file if not found
+        #creating the file if not found and setting it to default data
         print(f"Created {filepath} since it was not found.")
         filepath = os.path.join("json","server",f"{str(message.guild.id)}.json")
         if not os.path.exists(filepath):
@@ -41,22 +42,29 @@ def get_prefix(bot, message):
                 data=defaultData
                 json.dump(data, f, indent=4)
         prefix = data.get("prefix")
+        #Note: Add self mention also here. will be useful.
+        #Currently, a simple ping is given in general.py where it responds easily
     return prefix
 
+
+#Discord intents here. message_content is needed for the bot to work with messages
 intents = discord.Intents.default()
 intents.message_content = True
-client = commands.Bot(intents=intents, command_prefix=get_prefix)
+client = commands.Bot(intents=intents, command_prefix=get_prefix, case_insensitive=True)
 
 if webhookURL:
     webhook.send("Bot is starting...")
 
-def checkMod(user, type):
+def checkMod(user, type): #checking if user is a bot mod
+ try:
     with open('json/botmods.json', 'r')as f:
         f=json.load(f)
     if user in f[type]:
         return True
     else:
         return False
+ except FileNotFoundError:
+     print("Error occurred. Run setup again to fix the issue.")
     
 @client.event
 async def on_ready():
@@ -83,13 +91,21 @@ async def on_ready():
 
 @client.command()
 async def load(ctx, extension: str):
-
-  if checkMod(ctx.author.id, 'admin'):
+  if not checkMod(ctx.author.id, 'admin'):
+    pass
+  else:
+    # Check if the file exists
+    filepath = f'cogs/{extension}.py'
+    if not os.path.exists(filepath):
+        await ctx.send("Check file name and try again")
+        return
+    
     try:
         await client.load_extension(f'cogs.{extension}')
         if webhookURL:
             webhook.send(f'Cog {extension} loaded successfully')
     except commands.ExtensionNotFound:
+        await ctx.send("Check file name and try again")
         if webhookURL:
             webhook.send(f'Error: Cog `{extension}` not found.')
     except commands.ExtensionAlreadyLoaded:
@@ -116,7 +132,15 @@ async def unload(ctx, extension: str):
 
 @client.command()
 async def reload(ctx, extension: str):
-  if checkMod(ctx.author.id, 'admin'):
+  if not checkMod(ctx.author.id, 'admin'):
+    pass
+  else:
+    # Check if the file exists
+    filepath = f'cogs/{extension}.py'
+    if not os.path.exists(filepath):
+        await ctx.send("Check file name and try again")
+        return
+    
     try:
         await client.reload_extension(f'cogs.{extension}')
         if webhookURL:

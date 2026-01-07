@@ -60,11 +60,9 @@ class General(commands.Cog):
                 if message.author.avatar:
                     embed.set_thumbnail(url=message.author.avatar.url)
 
-                bot_prefix = ""
-                if isinstance(self.client.command_prefix, str):
-                    bot_prefix = self.client.command_prefix
-                elif isinstance(self.client.command_prefix, list) and self.client.command_prefix:
-                    bot_prefix = self.client.command_prefix[0]
+                with open(filepath, "r") as f:
+                    data=json.load(f)
+                bot_prefix=data.get("prefix", [])
 
                 embed.set_footer(text=f"My prefix is: {bot_prefix}")
                 await message.reply(embed=embed)

@@ -38,14 +38,15 @@ class commandClass(commands.Cog):
         aliases=['s'])
     async def say(self, ctx, *, message):
         await ctx.send(f"{message}")
+        message.delete()
 
     #command #3
     @commands.command()
-    async def addPrefix(self, ctx, new_prefix):
+    async def addPrefix(self, ctx, *, new_prefix):
         guildID=ctx.guild.id
         with open(f"json/server/{guildID}.json", "r") as f:
             file=json.load(f)
-        if ctx.user.id in file["Admins"]:
+        if ctx.author.id in file["admins"]:
             filepath = os.path.join("json","server",f"{str(guildID)}.json")
             if not os.path.exists(filepath):
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -75,7 +76,7 @@ class commandClass(commands.Cog):
         guildID=ctx.guild.id
         with open(f"json/server/{guildID}.json", "r") as f:
             file=json.load(f)
-        if ctx.user.id in file["Admins"]:
+        if ctx.author.id in file["admins"]:
             filepath = os.path.join("json","server",f"{str(guildID)}.json")
             if not os.path.exists(filepath):
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -102,8 +103,8 @@ class commandClass(commands.Cog):
             msg=await ctx.send("You do not have the permission to use this command.")
             await msg.delete(delay=5)
 
-    #command #5
-    @commands.command()
+    #command #5 
+    @commands.command(aliases=['prefixes', 'listprefix'])
     async def listPrefixes(self, ctx):
         guildID=ctx.guild.id
         filepath = os.path.join("json","server",f"{str(guildID)}.json")
@@ -120,21 +121,6 @@ class commandClass(commands.Cog):
         prefix_list = ', '.join(prefixes)
         await ctx.send(f"Current prefixes: {prefix_list}")
 
-    #command #6
-    @commands.command()
-    async def serverInfo(self, ctx):
-        guild = ctx.guild
-        embed = discord.Embed(
-            title=f"Server Info: {guild.name}",
-            color=discord.Color.blue()
-        )
-        embed.set_thumbnail(url=guild.icon.url if guild.icon else discord.Embed.Empty)
-        embed.add_field(name="Server ID", value=guild.id, inline=False)
-        embed.add_field(name="Owner", value=guild.owner, inline=False)
-        embed.add_field(name="Member Count", value=guild.member_count, inline=False)
-        embed.add_field(name="Created At", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
-        await ctx.send(embed=embed)
-    
 
 async def setup(client):
     await client.add_cog(commandClass(client))
