@@ -8,5 +8,6 @@
         "onMessage": true,
         "AImemory": true
     },
-    "AI_memory":[]
+    "AI_memory":{},
+    "toDoList":{}
 }

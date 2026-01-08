@@ -13,3 +13,4 @@ Thumbs.db
 .env
 .env.local
 notes.txt
+handler.py

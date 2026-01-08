@@ -4,20 +4,6 @@ import time
 import json
 
 
-defaultData='''{
-    "prefix": "[t-]",
-    "admins": [],
-    "Features": {
-        "ping":true,
-        "8ball": true,
-        "gemini": true,
-        "onMessage": true,
-        "AImemory": true
-    },
-    "AI_memory":[]
-}'''
-
-
 def reset():
     print("Are you sure you want to reset the bot? This will delete all data. (y/n)")
     choice=input().lower()
@@ -72,11 +58,6 @@ def setup():
         "json/botmods.json",
         "json/control.json",
     ]
-    file="json/defaultServer.json"
-
-    print("Setting the default configuration file...")
-    with open(file, "w") as f:
-        f.write(defaultData)
         
     for file in required_files:
         if not os.path.exists(file):

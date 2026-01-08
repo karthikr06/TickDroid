@@ -55,7 +55,7 @@ client = commands.Bot(intents=intents, command_prefix=get_prefix, case_insensiti
 if webhookURL:
     webhook.send("Bot is starting...")
 
-def checkMod(user, type): #checking if user is a bot mod
+def checkMod(user, type="admin"): #checking if user is a bot mod
  try:
     with open('json/botmods.json', 'r')as f:
         f=json.load(f)
@@ -91,9 +91,7 @@ async def on_ready():
 
 @client.command()
 async def load(ctx, extension: str):
-  if not checkMod(ctx.author.id, 'admin'):
-    pass
-  else:
+  if checkMod(ctx.author.id, 'admin'):
     # Check if the file exists
     filepath = f'cogs/{extension}.py'
     if not os.path.exists(filepath):
@@ -132,9 +130,7 @@ async def unload(ctx, extension: str):
 
 @client.command()
 async def reload(ctx, extension: str):
-  if not checkMod(ctx.author.id, 'admin'):
-    pass
-  else:
+  if checkMod(ctx.author.id, 'admin'):
     # Check if the file exists
     filepath = f'cogs/{extension}.py'
     if not os.path.exists(filepath):

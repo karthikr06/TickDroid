@@ -73,25 +73,6 @@ class General(commands.Cog):
                      message="Give me a personal greeting message"
                 gemini_prompt=f"{message} Provide answer in 6-7 lines in a conversational and friendly style. Ignore line limit if you feel like it is not sufficient."
                 gemini_response_text = await self.client.get_cog('GeminiCog').get_gemini_response(gemini_prompt)
-
-                '''embed = discord.Embed(
-                    title=f"{message}",
-                    description=f"{gemini_response_text}",
-                    color=discord.Color.blue()
-                )
-
-                if ctx.author.avatar:
-                    embed.set_thumbnail(url=ctx.author.avatar.url)
-                embed.set_footer(text="Powered by Gemini 2.5 Flash")
-                bot_prefix = ""
-                if isinstance(self.client.command_prefix, str):
-                    bot_prefix = self.client.command_prefix
-                elif isinstance(self.client.command_prefix, list) and self.client.command_prefix:
-                    bot_prefix = self.client.command_prefix[0]
-
-                embed.set_footer(text=f"My prefix is: {bot_prefix}")
-                #await ctx.reply(embed=embed)
-                '''
                 await ctx.reply(gemini_response_text)
         
 

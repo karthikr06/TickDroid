@@ -24,24 +24,32 @@ class eightBall(commands.Cog):
         help="Plays Magic 8-Ball",
         aliases=['8ball', '8b'])
     async def eightball(self, ctx,*, message: str):
-        geminiPrompt=(f'''Give a reply for {message} as if you are a magic 8 ball that is optimistic and positive for positive things
-                      and negative reply for negative things''')
-        
+      try:
+        with open(f"json/server/{str(ctx.guild.id)}.json", "r") as f:
+            serverconfig=json.load(f)
+        if serverconfig["8ball"]==True: 
+            geminiPrompt=(f'''Give a reply for {message} as if you are a magic 8 ball that is optimistic and positive for positive things
+                        and negative reply for negative things''')
+            
 
-        gemini_response_text = await self.client.get_cog('GeminiCog').get_gemini_response(geminiPrompt)
+            gemini_response_text = await self.client.get_cog('GeminiCog').get_gemini_response(geminiPrompt)
 
-        embed = discord.Embed(
-        title=f"{ctx.author.display_name}: {message}",
-        description=f"{gemini_response_text}",
-        color=discord.Color.blue() # You can choose any color you like
-        )
+            embed = discord.Embed(
+            title=f"{ctx.author.display_name}: {message}",
+            description=f"{gemini_response_text}",
+            color=discord.Color.blue() # You can choose any color you like
+            )
 
-        tip="✨Powered by Google Gemini"
+            tip="✨Powered by Google Gemini"
 
-        embed.set_footer(text=f"🎱Magic 8 Ball 🎱\n{tip}", )
-        if ctx.author.avatar.url:
-            embed.set_thumbnail(url=ctx.author.avatar.url)
-        await ctx.reply(embed=embed)
+            embed.set_footer(text=f"🎱Magic 8 Ball 🎱\n{tip}", )
+            if ctx.author.avatar.url:
+                embed.set_thumbnail(url=ctx.author.avatar.url)
+            await ctx.reply(embed=embed)
+        else:
+            pass
+      except Exception as e:
+          webhook.send(f"Error in 8ball command: \n```{e}```")
 
 
 async def setup(client):

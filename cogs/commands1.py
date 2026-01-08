@@ -27,8 +27,16 @@ class commandClass(commands.Cog):
         help="Checks the bot's latency", 
         aliases=['latency', 'lats'])
     async def ping(self, ctx):
-        latency = round(self.client.latency * 1000) # Latency in milliseconds
-        await ctx.send(f"Pong! My latency is {latency}ms.")
+      try:
+        with open(f"json/server/{str(ctx.guild.id)}.json", "r") as f:
+            serverconfig=json.load(f)
+        if serverconfig["features"]["ping"]==False:
+            pass
+        else:
+            latency = round(self.client.latency * 1000) # Latency in milliseconds
+            await ctx.send(f"Pong! My latency is {latency}ms.")
+      except Exception as e:
+            webhook.send(f"Error in ping command: \n```{e}```")
 
     
     #command #2
@@ -48,6 +56,8 @@ class commandClass(commands.Cog):
             file=json.load(f)
         if ctx.author.id in file["admins"]:
             filepath = os.path.join("json","server",f"{str(guildID)}.json")
+
+            #creating the file if it does not exist yet
             if not os.path.exists(filepath):
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
                 with open(filepath, 'w')as f:
@@ -55,12 +65,16 @@ class commandClass(commands.Cog):
                         defaultData=json.load(r)
                     data=defaultData
                     json.dump(data, f, indent=4)
+            
+            #opening the file to find the prefixes
             with open(filepath, "r") as f:
                 data=json.load(f)
             prefixes=data.get("prefix", [])
             if new_prefix in prefixes:
                 await ctx.send(f"The prefix '{new_prefix}' is already in use.")
                 return
+            
+            #adding the new prefix
             prefixes.append(new_prefix)
             data["prefix"]=prefixes
             with open(filepath, "w") as f:
@@ -120,7 +134,7 @@ class commandClass(commands.Cog):
         prefixes=data.get("prefix", [])
         prefix_list = ', '.join(prefixes)
         await ctx.send(f"Current prefixes: {prefix_list}")
-
+    
 
 async def setup(client):
     await client.add_cog(commandClass(client))
