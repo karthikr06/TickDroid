@@ -64,7 +64,7 @@ def setup():
             print(f"Missing file: {file}. Creating default.")
             if file == "json/botmods.json":
                 with open(file, "w") as f:
-                    f.write('{\n    "admin":[],\n    "webookURL":"",\n   "gemini_api_key": "",\n   "bot_token":""\n }')
+                    f.write('{\n    "admin":[],\n    "webookURL":"",\n   "gemini_api_key": "",\n   "bot_token":"",\n  "client_id": "",\n   "client_secret":""\n}')
             elif file == "json/control.json":
                 with open(file, "w") as f:
                     with open("json/defaultServer.json", "r") as r:

@@ -75,6 +75,7 @@ class ToDoList(commands.Cog):
         else:
             await ctx.send("Use add, done or remove as the action!")
             await asyncio.sleep(1)
+            
         if not toDoList:
             embed.description="Your to-do list is empty."
         else:

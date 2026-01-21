@@ -12,6 +12,10 @@ if not webhookURL:
     pass
 else:
     webhook=discord.SyncWebhook.from_url(webhookURL)
+if not webhookURL:
+    pass
+else:
+    webhook=discord.SyncWebhook.from_url(webhookURL)
 
 # Function to get server-specific prefix
 def get_prefix(bot, message):

@@ -8,11 +8,8 @@ import json
 with open("json/botmods.json", "r") as f:
     config=json.load(f)
 webhookURL=config.get("webookURL","")
-if not webhookURL:
-    pass
-else:
+if webhookURL:
     webhook=discord.SyncWebhook.from_url(webhookURL)
-
 
 class INI(commands.Cog):
     def __init__(self, client):
@@ -92,10 +89,7 @@ class INI(commands.Cog):
         webhook.send(f"User {ctx.author} ({ctx.author.id}) tried to use the integrity check command but was not authorised.")
      except Exception as e:
          webhook.send(f"Error occurred during Integrity check: \n{e}")
-            
-        
 
 
 async def setup(client):
     await client.add_cog(INI(client))
-

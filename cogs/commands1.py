@@ -30,7 +30,7 @@ class commandClass(commands.Cog):
       try:
         with open(f"json/server/{str(ctx.guild.id)}.json", "r") as f:
             serverconfig=json.load(f)
-        if serverconfig["features"]["ping"]==False:
+        if serverconfig["Features"]["ping"]==False:
             pass
         else:
             latency = round(self.client.latency * 1000) # Latency in milliseconds
