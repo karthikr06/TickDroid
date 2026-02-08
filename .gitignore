@@ -14,3 +14,6 @@ Thumbs.db
 .env.local
 notes.txt
 handler.py
+Dashboard/
+Dashboard/templates/
+Dashboard/templates/dashboard.html
