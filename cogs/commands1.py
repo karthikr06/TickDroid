@@ -42,8 +42,7 @@ class commandClass(commands.Cog):
     #command #2
     @commands.command(
         name="say",
-        help="say stuff", 
-        aliases=['s'])
+        help="say stuff")
     async def say(self, ctx, *, message):
         await ctx.send(f"{message}")
         message.delete()

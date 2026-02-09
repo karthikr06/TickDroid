@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import json
 
+
 #getting the configuration file
 with open("json/botmods.json", "r") as f:
     config=json.load(f)

@@ -74,6 +74,13 @@ class General(commands.Cog):
                 gemini_prompt=f"{message} Provide answer in 6-7 lines in a conversational and friendly style. Ignore line limit if you feel like it is not sufficient."
                 gemini_response_text = await self.client.get_cog('GeminiCog').get_gemini_response(gemini_prompt)
                 await ctx.reply(gemini_response_text)
+
+        @commands.command()
+        async def s(self,ctx,*, message=None):
+                if not message:
+                     message="Give me a personal greeting message"
+                sarvamReply = await self.client.get_cog('GeminiCog').get_sarvam_response(message)
+                await ctx.reply(sarvamReply)
         
 
 
