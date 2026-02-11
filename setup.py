@@ -64,7 +64,7 @@ def setup():
             print(f"Missing file: {file}. Creating default.")
             if file == "json/botmods.json":
                 with open(file, "w") as f:
-                    f.write('{\n    "admin":[],\n    "webookURL":"",\n   "gemini_api_key": "",\n   "bot_token":"",\n  "client_id": "",\n   "client_secret":""\n}')
+                    f.write('{\n    "admin":[],\n    "webookURL":"",\n   "gemini_api_key": "",\n "sarvam_api_key": "",\n   "bot_token":"",\n  "client_id": "",\n   "client_secret":""\n}')
             elif file == "json/control.json":
                 with open(file, "w") as f:
                     with open("json/defaultServer.json", "r") as r:
@@ -75,7 +75,7 @@ def setup():
     time.sleep(1)
     print("Bot admin is the admin who can use admin commands and manage the bot settings.")
     print("You can add admins by editing json/botmods.json")
-    print("In the same folder, add webhook URL, Gemini API key and bot token to their respective fields.")
+    print("In the same folder, add webhook URL, Gemini API key, Sarvam API key, and bot token to their respective fields.")
     print("DO NOT SHARE THESE KEYS WITH ANYONE!")
     text=""
     while(text!="continue"):
