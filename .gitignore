@@ -17,3 +17,5 @@ handler.py
 Dashboard/
 Dashboard/templates/
 Dashboard/templates/dashboard.html
+voiceModels/en_US-lessac-medium.onnx
+voiceModels/en_US-lessac-medium.onnx.json
