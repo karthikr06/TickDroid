@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -6,9 +7,8 @@ from google.genai import types
 import json
 import io
 import os
+import azure.cognitiveservices.speech as speechsdk
 
-import wave
-from piper import PiperVoice
 
 
 #getting the configuration file
@@ -91,7 +91,7 @@ class pdfButtons(discord.ui.View):
                 await self.bot_message.edit(content=f"Processing {self.attachment.filename}...", view=None)
             except Exception:
                 pass
-    
+        
         try:
             file_data=await self.attachment.read()
             iofile=io.BytesIO(file_data)
@@ -100,29 +100,53 @@ class pdfButtons(discord.ui.View):
             #generating response
             prompt=[upload, "Summarise this file clearly, without any scientific notation or jargon. No extra things to be added, just the summary clearly under 1800 characters."]
             response = await interaction.client.get_cog('GeminiCog').get_gemini_response(prompt)
-            #response="This is a dummy summary for testing the audio summary feature. Replace this with the actual response from Gemini API."
-            #Get the TTS version of this using GROQ
             try:
-                #voice=PiperVoice.load(voicePath, use_cuda=True)
-                voice=PiperVoice.load(voicePath, use_cuda=False) #using CPU version temporarily until I can figure out the CUDA issue with the ONNX runtime
+                path=f"cogs/TTS/{interaction.guild.id}"
+                os.makedirs(path, exist_ok=True)
                 outputFilename=f"{self.attachment.filename}_summary.wav"
-                with wave.open(outputFilename, "wb") as wav_file:
-                    voice.synthesize_wav(response, wav_file)
+                fullPath=os.path.join(path, outputFilename)
                 
-                file=discord.File(outputFilename)
+                AZURE_KEY=config.get("azure_speech_key","")
+                AZURE_REGION="centralindia"
+                
+                speech_config = speechsdk.SpeechConfig(subscription=AZURE_KEY, region=AZURE_REGION)
+                audio_config = speechsdk.audio.AudioConfig(filename=fullPath)
+                synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+                synthesizer.speak_text_async(response).get()
 
-                await interaction.channel.send(
-                    content=f"Audio summary of {self.attachment.filename}:",
-                    file=file,
-                    reference=discord.MessageReference(message_id=self.msgID, channel_id=interaction.channel.id)
-                )
+                file=discord.File(fullPath)
+                try:
+                    await interaction.channel.send(
+                        content=f"Audio summary of {self.attachment.filename}:",
+                        file=file,
+                        reference=discord.MessageReference(message_id=self.msgID, channel_id=interaction.channel.id)
+                    )
+                except Exception as e:
+                    await interaction.channel.send(
+                        ccontent=f"Audio summary of {self.attachment.filename}:",
+                        file=file
+                    )
 
-                os.remove(outputFilename)
-            except:
-                webhook.send("Error in generating audio summary with GROQ.")
+                try:
+                    del synthesizer
+                except:
+                    pass
+
+                for _ in range(5): #retry mechanism to handle file access issues
+                    try:
+                        os.remove(fullPath)
+                        if os.path.exists(path) and not os.listdir(path):
+                            os.rmdir(path)
+                        break
+                    except Exception as e:
+                        await asyncio.sleep(1)
+                
+            except Exception as e:
+                if webhookURL:
+                    webhook.send(f"Error in generating audio summary: {e}")
 
             # Try to send the audio summary as a reply to the original user's message
-
+            
             try:
                 await self.bot_message.delete()
             except:
@@ -137,33 +161,67 @@ class pdfButtons(discord.ui.View):
              except Exception:                 
                  pass
              self.stop()
+        
 
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.gray,emoji="❌")
+    async def cancel(self, interaction:discord.Interaction, button:discord.ui.Button):
+        await interaction.response.defer()
+        try:
+            await self.bot_message.delete()
+        except Exception:
+            pass
+        self.stop() #stopping the view so that buttons are not active after one use
 
-
+    
 #TEST BUTTON
 class testButton(discord.ui.View):
     @discord.ui.button(label="Test", style=discord.ButtonStyle.green)
     async def test(self, interaction:discord.Interaction, button:discord.ui.Button):
-        await interaction.response.send_message("Button works!")
-
-        response="This is a dummy summary for testing the audio summary feature. Replace this with the actual response from Gemini API."
-            #Get the TTS version of this using GROQ
-        if(True):
-            voice=PiperVoice.load(voicePath, use_cuda=True)
-            outputFilename=f"test_summary.wav"
-            with wave.open(outputFilename, "wb") as wav_file:
-                voice.synthesize_wav(response, wav_file)
+        try:
+            await interaction.response.send_message("Button works!")
+            response="This is a dummy summary for testing the audio summary feature."
+            path=f"cogs/TTS/{interaction.guild.id}"
+            os.makedirs(path, exist_ok=True)
+            outputFilename=f"Test_summary.wav"
+            fullPath=os.path.join(path, outputFilename)
             
-            file=discord.File(outputFilename)
+            AZURE_KEY=config.get("azure_speech_key","")
+            AZURE_REGION="centralindia"
+            
+            speech_config = speechsdk.SpeechConfig(subscription=AZURE_KEY, region=AZURE_REGION)
+            audio_config = speechsdk.audio.AudioConfig(filename=fullPath)
+            synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+            synthesizer.speak_text_async(response).get()
+            
+            file=discord.File(fullPath)
 
             await interaction.channel.send(
-                content=f"Audio summary of testFile:",
+                content=f"Test Audio Summary:",
                 file=file
             )
 
-            os.remove(outputFilename)
-        if webhookURL:
-            webhook.send("Test button was clicked!")
+            del synthesizer
+
+            for _ in range(5): #retry mechanism to handle file access issues
+                try:
+                    os.remove(fullPath)
+                    if os.path.exists(path) and not os.listdir(path):
+                        os.rmdir(path)
+                    break
+                except:
+                    await asyncio.sleep(1)
+
+            if webhookURL:
+                webhook.send("Test button was clicked!")
+        except Exception as e:
+          try:
+            os.remove(fullPath)
+            if os.path.exists(path) and not os.listdir(path):
+                os.rmdir(path)
+          except:
+            pass
+        
+
   
 class fileLogic(commands.Cog):
     def __init__(self, client):
@@ -197,3 +255,8 @@ class fileLogic(commands.Cog):
 
 async def setup(client):
     await client.add_cog(fileLogic(client))
+
+
+
+
+

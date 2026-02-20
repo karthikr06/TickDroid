@@ -4,7 +4,6 @@ from google import genai
 import json
 from sarvamai import SarvamAI
 
-
 #getting the configuration file
 with open("json/botmods.json", "r") as f:
     config=json.load(f)
@@ -45,6 +44,30 @@ class GeminiCog(commands.Cog):
         response = self.sarvam_client.chat.completions(
         messages=[{"role": "user", "content": f"{prompt}. Do not end the reply with a question."}],temperature=0.5, top_p=1, max_tokens=1000,)
         return response.choices[0].message.content
+
+
+    #Fix this in next commit
+    '''
+    async def getAudioResponse(self, text=None) -> bytes:
+        if True:
+            device = 'auto'
+            speed=1.0
+            if not text:
+                text="Hello, How are you doing today? Need any help from my end?"
+            model=TTS(language="EN", device=device)
+            speaker_ids=model.hps.data.spk2id
+            output_path='en-br.wav'
+            model.tts_to_file(text, speaker_ids['EN-BR'], output_path, speed=speed)
+        else:
+        
+        
+            if not text:
+                text="Hello, How are you doing today? Need any help from my end?"
+            audio_response=self.client.models.generate_content(model="gemini-3-flash-preview", contents=text, modalities=["text","audio"])
+            return audio_response.audio.data
+    '''
+        
+    
 
 async def setup(client):
     await client.add_cog(GeminiCog(client))
