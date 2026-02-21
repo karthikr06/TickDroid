@@ -53,7 +53,7 @@ class commandClass(commands.Cog):
         guildID=ctx.guild.id
         with open(f"json/server/{guildID}.json", "r") as f:
             file=json.load(f)
-        if ctx.author.id in file["admins"]:
+        if ctx.author.id in file["admins"] or ctx.permissions_in(ctx.channel).manage_guild:
             filepath = os.path.join("json","server",f"{str(guildID)}.json")
 
             #creating the file if it does not exist yet
@@ -89,7 +89,7 @@ class commandClass(commands.Cog):
         guildID=ctx.guild.id
         with open(f"json/server/{guildID}.json", "r") as f:
             file=json.load(f)
-        if ctx.author.id in file["admins"]:
+        if ctx.author.id in file["admins"] or ctx.permissions_in(ctx.channel).manage_guild:
             filepath = os.path.join("json","server",f"{str(guildID)}.json")
             if not os.path.exists(filepath):
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)

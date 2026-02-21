@@ -22,9 +22,6 @@ else:
 
 genAI_client=genai.Client(api_key=config.get("gemini_api_key",""))
 
-#for voice
-voicePath="D:/Dev/TICKDROID 2.0/cogs/voiceModels/en_US-lessac-medium.onnx"
-
 
 class pdfButtons(discord.ui.View):
     def __init__(self, attachment:discord.Attachment, bot_message:discord.Message=None, msgID:int=None):
@@ -57,7 +54,6 @@ class pdfButtons(discord.ui.View):
             response = await interaction.client.get_cog('GeminiCog').get_gemini_response(prompt)
 
             # Try to send the summary as a reply to the original user's message
-
             try:
                     await interaction.channel.send(
                         f"Summary of {self.attachment.filename}:\n\n{response}",
